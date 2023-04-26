@@ -53,7 +53,7 @@ module ClosureTree
       _ct.with_advisory_lock do
         delete_hierarchy_references
         if _ct.options[:dependent] == :nullify
-          self.class.find(self.id).children.find_each { |c| c.rebuild! }
+          self.class.find(self.id).poly_children.each { |c| c.rebuild! }
         end
       end
       true # don't prevent destruction
@@ -79,9 +79,9 @@ module ClosureTree
           _ct_reorder_siblings if !called_by_rebuild
         end
 
-        children.find_each { |c| c.rebuild!(true) }
+        poly_children.each { |c| c.rebuild!(true) }
 
-        _ct_reorder_children if _ct.order_is_numeric? && children.present?
+        _ct_reorder_children if _ct.order_is_numeric? && poly_children.present?
       end
     end
 

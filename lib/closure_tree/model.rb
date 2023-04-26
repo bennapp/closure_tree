@@ -36,7 +36,7 @@ module ClosureTree
 
       has_many :self_and_ancestors, *_ct.has_many_order_without_option(order_by_generations),
         through: :ancestor_hierarchies,
-        source: :ancestor
+        source: :ancestor, source_type: _ct.model_class.to_s
 
       has_many :descendant_hierarchies, *_ct.has_many_order_without_option_and_where(order_by_generations, where_for_descendants),
         class_name: _ct.hierarchy_class_name,
@@ -45,11 +45,6 @@ module ClosureTree
       has_many :self_and_descendants, *_ct.has_many_order_with_option(order_by_generations),
         through: :descendant_hierarchies,
         source: :descendant, source_type: _ct.model_class.to_s
-    end
-
-    def poly_children
-      scope = hierarchy_class.where(ancestor_id: id, ancestor_type: _ct.model_class.to_s, generations: 1)
-      map_and_group_relation(scope, :descendants)
     end
 
     def poly_self_and_descendants
@@ -86,9 +81,23 @@ module ClosureTree
       end
     end
 
+    def poly_children
+      own_table_children = self.class.where(parent: self)
+      hierarchical_subclasses_children = hierarchical_subclasses.map { |klass| klass.where(parent: self) }
+      [own_table_children, hierarchical_subclasses_children].flatten
+    end
+
+    def hierarchical_subclasses
+      _ct.options[:hierarchical_subclasses]
+    end
+
     # Delegate to the Support instance on the class:
     def _ct
       self.class._ct
+    end
+
+    def poly_root
+      hierarchy_class.where(descendant: self).order('generations desc').first&.ancestor
     end
 
     # Returns true if this node has no parents.
@@ -111,10 +120,6 @@ module ClosureTree
     # Returns the farthest ancestor, or self if +root?+
     def root
       self_and_ancestors.where(_ct.parent_column_name.to_sym => nil).first
-    end
-
-    def poly_root
-      hierarchy_class.where(descendant: self).order('generations desc').first&.ancestor
     end
 
     def leaves
