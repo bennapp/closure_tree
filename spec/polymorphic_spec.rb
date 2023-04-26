@@ -76,4 +76,17 @@ RSpec.describe 'Polymorphic methods' do
     expect(sub_task.poly_root).to eq(root_parent)
     expect(child.poly_root).to eq(root_parent)
   end
+
+  it 'can update parents and use rebuild and hierarchy maintenance is correct' do
+    root_parent = Project.create!(name: 'root parent')
+    parent = Project.create!(name: 'parent', parent: root_parent)
+    child = Task.create!(name: 'child', parent: parent)
+    sub_task = Task.create!(name: sub_task, parent: child)
+
+    changing_project = Project.create!(name: 'changing', parent: root_parent)
+    parent.parent = changing_project
+    parent.save!
+
+    expect(sub_task.poly_ancestors).to include(changing_project)
+  end
 end

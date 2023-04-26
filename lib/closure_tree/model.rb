@@ -36,7 +36,7 @@ module ClosureTree
 
       has_many :self_and_ancestors, *_ct.has_many_order_without_option(order_by_generations),
         through: :ancestor_hierarchies,
-        source: :ancestor
+        source: :ancestor, source_type: _ct.model_class.to_s
 
       has_many :descendant_hierarchies, *_ct.has_many_order_without_option_and_where(order_by_generations, where_for_descendants),
         class_name: _ct.hierarchy_class_name,
