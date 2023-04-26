@@ -47,6 +47,12 @@ module ClosureTree
         source: :descendant, source_type: _ct.model_class.to_s
     end
 
+    class_methods do
+      def hierarchical_subclasses
+        _ct.options[:hierarchical_subclasses]
+      end
+    end
+
     def poly_self_and_descendants
       scope = hierarchy_class.where(ancestor: self)
       map_and_group_relation(scope, :descendants)
@@ -83,12 +89,8 @@ module ClosureTree
 
     def poly_children
       own_table_children = self.class.where(parent: self)
-      hierarchical_subclasses_children = hierarchical_subclasses.map { |klass| klass.where(parent: self) }
+      hierarchical_subclasses_children = self.class.hierarchical_subclasses.map { |klass| klass.where(parent: self) }
       [own_table_children, hierarchical_subclasses_children].flatten
-    end
-
-    def hierarchical_subclasses
-      _ct.options[:hierarchical_subclasses]
     end
 
     # Delegate to the Support instance on the class:
