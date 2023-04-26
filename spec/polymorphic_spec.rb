@@ -89,4 +89,8 @@ RSpec.describe 'Polymorphic methods' do
 
     expect(sub_task.poly_ancestors).to include(changing_project)
   end
+
+  it 'has hierarchical_subclasses on class and instance level' do
+    expect(Project.hierarchical_subclasses).to eq([Task])
+  end
 end
