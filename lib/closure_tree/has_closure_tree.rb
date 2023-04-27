@@ -13,6 +13,7 @@ module ClosureTree
         :touch,
         :with_advisory_lock,
         :hierarchical_subclasses,
+        :hierarchical_parent_class,
       )
 
       class_attribute :_ct

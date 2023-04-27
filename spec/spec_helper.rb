@@ -105,11 +105,11 @@ require_relative 'support/exceed_query_limit'
 require_relative 'support/query_counter'
 
 class Task < ActiveRecord::Base
-  has_closure_tree
+  has_closure_tree hierarchical_parent_class: Project
 end
 
 class Project < ActiveRecord::Base
-  has_closure_tree hierarchical_subclasses: [Task]
+  has_closure_tree hierarchical_subclasses: [Task], hierarchical_parent_class: Organization
 end
 
 class Organziation < ActiveRecord::Base

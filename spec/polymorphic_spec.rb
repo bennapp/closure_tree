@@ -93,4 +93,8 @@ RSpec.describe 'Polymorphic methods' do
   it 'has hierarchical_subclasses on class and instance level' do
     expect(Project.hierarchical_subclasses).to eq([Task])
   end
+
+  it 'has hierarchical_parent_class on class and instance level' do
+    expect(Project.hierarchical_parent_class).to eq(Organization)
+  end
 end

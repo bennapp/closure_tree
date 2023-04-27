@@ -51,6 +51,10 @@ module ClosureTree
       def hierarchical_subclasses
         _ct.options[:hierarchical_subclasses]
       end
+
+      def hierarchical_parent_class
+        _ct.options[:hierarchical_parent_class]
+      end
     end
 
     def poly_self_and_descendants
