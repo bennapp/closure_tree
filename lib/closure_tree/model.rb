@@ -57,8 +57,8 @@ module ClosureTree
     end
 
     def poly_self_and_ancestors
-      scope = hierarchy_class.where(descendant: self)
-      map_and_group_relation(scope, :ancestors)
+      scope = hierarchy_class.where(descendant: self).order('generations desc')
+      map_and_group_relation(scope, :ancestors).reverse
     end
 
     def poly_ancestors
